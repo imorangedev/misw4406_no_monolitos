@@ -4,7 +4,7 @@ Este repositorio contiene el código para ejecutar la generación de los mapas d
 
 
 ## Estructura
-├── Entrega 1 # Imágenes de los mapas de contexto y resultado del Event storming para el AS-IS y el TO-BE de STA
+├── Entrega 1 # Imágenes de los mapas de contexto y resultado del Event storming para el AS-IS y el TO-BE de STA. También existe un documento de resumen, el cuál contiene también un glosario del lenguaje ubicuo y descripciones del proceso de diseño
 
 │
 
