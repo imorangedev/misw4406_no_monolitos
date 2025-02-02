@@ -1,0 +1,72 @@
+Domain AdquisicionDatos {
+	domainVisionStatement = "Ingestión, anonimización y enriquecimiento de datos de imagenes diagnósticas"
+	Subdomain Ingestion {
+		type = GENERIC_SUBDOMAIN
+		domainVisionStatement = "Adquisición y almacenamiento de imágenes diagnósticas de proveedores"
+	}
+	Subdomain Anonimizacion {
+		type = CORE_DOMAIN
+		domainVisionStatement = "Ofuscación de datos personales en la imágenes que permitan la identificación de un paciente"
+	}
+	Subdomain Validacion {
+		type = GENERIC_SUBDOMAIN
+		domainVisionStatement = "Validación manual de la efectividad de la ofuscación de las imágenes"
+	}
+	Subdomain Etiquetado {
+		type = CORE_DOMAIN
+		domainVisionStatement = "Generación de etiquetas que caracteriza a una imágen diagnóstica anonimizada"
+	}
+	Subdomain Features {
+		type = CORE_DOMAIN
+		domainVisionStatement = "Extracción de los features que caracterizan a una imágen diagnóstica anonimizada"
+	}
+	Subdomain Tokens {
+		type = CORE_DOMAIN
+		domainVisionStatement = "Asignación de tokens a imágenes con el mismo origen para tener trazabilidad de un mismo paciente"
+	}
+	Subdomain Entrega {
+		type = GENERIC_SUBDOMAIN
+		domainVisionStatement = "Entrega de conjuntos de datos ofuscados y con features etiquetados a un consumidor"
+	}
+}
+
+Domain EntrenamientoIA {
+	domainVisionStatement = "Configuración de ambientes en la nube y provisión de herramientas para el entrenamiento de modelos de inteligencia artificial"
+	Subdomain Licencias {
+		type = SUPPORTING_DOMAIN
+		domainVisionStatement = "Licenciamiento a consumidores de imágenes diagnósticas ofuscadas"
+	}
+	Subdomain Entornos {
+		type = GENERIC_SUBDOMAIN
+		domainVisionStatement = "Configuración de entornos según las licencias de clientes para el uso de la plataforma"
+	}
+	Subdomain Servicios {
+		type = CORE_DOMAIN
+		domainVisionStatement = "Ejecución de servicios de extracción, filtrado, consultas y entrenamiento en datasets empleando conjuntos de imágenes ofuscadas"
+	}
+}
+BoundedContext ContextoIngestion implements Ingestion
+BoundedContext ContextoAnonimizacion implements Anonimizacion
+BoundedContext ContextoValidacion implements Validacion
+BoundedContext ContextoEnriquecimiento implements Etiquetado, Features
+BoundedContext ContextoDatos implements Entrega
+BoundedContext ContextoVentas implements Licencias, Entornos
+BoundedContext ContextoServicios implements Servicios
+ContextMap SaludTechDeLosAlpes {
+	state = AS_IS
+	contains ContextoIngestion
+	contains ContextoAnonimizacion
+	contains ContextoValidacion
+	contains ContextoEnriquecimiento
+	contains ContextoDatos
+	contains ContextoVentas
+	contains ContextoServicios
+	ContextoEnriquecimiento [D] <- [U] ContextoAnonimizacion
+	ContextoAnonimizacion [D] <- [U] ContextoIngestion
+	ContextoDatos [D] <- [U] ContextoEnriquecimiento
+	ContextoServicios [D,ACL]<-[U,OHS] ContextoDatos
+	ContextoVentas [P]<->[P] ContextoDatos	
+	ContextoServicios [D, CF] <- [U] ContextoVentas
+	ContextoAnonimizacion [SK] <-> [SK] ContextoValidacion
+	ContextoEnriquecimiento [D] <- [U] ContextoValidacion
+}
