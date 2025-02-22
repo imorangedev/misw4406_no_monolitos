@@ -13,4 +13,11 @@ def health_check():
 @routing.post('/descargarImagenes')
 def descargar_imagenes():
     body = request.json()
-    HandlerServiciosDigitales().handle_solicitud_descarga()
+    comando = {
+        'id_cliente': body['id_cliente'],
+        'tipo': body['tipo'],
+        'servicio': body['servicio']
+    }
+    response = HandlerServiciosDigitales().handle_solicitud_descarga(comando)
+
+    return jsonify(response['response']), response['status_code']
