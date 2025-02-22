@@ -12,13 +12,19 @@ class JsonToZip(Comand):
 
     def json_to_zip(self, jsonObject: str, destinationPath: str) -> str:
         
-        with zipfile.ZipFile(destinationPath, mode="w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as zip_file: 
-            # Dump JSON data
-            dumped_JSON: str = json.dumps(jsonObject, ensure_ascii=False, indent=4)
-            # Write the JSON data into `data.json` *inside* the ZIP file
-            zip_file.writestr("data.json", data=dumped_JSON)
-            # Test integrity of compressed archive
-            zip_file.testzip()
+        try:
+
+            with zipfile.ZipFile(destinationPath, mode="w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as zip_file: 
+                # Dump JSON data
+                dumped_JSON: str = json.dumps(jsonObject, ensure_ascii=False, indent=4)
+                # Write the JSON data into `data.json` *inside* the ZIP file
+                zip_file.writestr("data.json", data=dumped_JSON)
+                # Test integrity of compressed archive
+                zip_file.testzip()
+
+        except Exception as e:
+            print(e)
+            return False
 
 class JsonToZipHandler(ComandHandler):
     def handle(self, comand: JsonToZip):
