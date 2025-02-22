@@ -7,4 +7,4 @@ class HandlerServiciosDigitales():
         self.topicos = listar_topicos()
 
     def handle_solicitud_descarga(self, comando: dict):
-        self.despachador.publicar_comando(comando, self.topicos['topico_servicios_descargas'])
+        return self.despachador.publicar_comando(comando, self.topicos['topico_servicios_descargas'])

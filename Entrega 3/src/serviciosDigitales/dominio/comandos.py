@@ -10,4 +10,5 @@ class SolicitarDescarga(ComandoDominio):
     id_cliente: UUID = None
     tipo: str = None
     servicio: str = None
+    imagenes: list = None
     fecha_creacion: dt = field(default_factory=dt.now)
