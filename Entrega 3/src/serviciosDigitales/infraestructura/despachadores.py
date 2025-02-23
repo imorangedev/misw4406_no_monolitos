@@ -29,3 +29,20 @@ class Despachador:
                 },
                 "status_code": 500,
             }
+    
+    def publicar_consulta(self, consulta, topico):
+        try:
+            self.channel.basic_publish(
+                exchange="", routing_key=topico, body=json.dumps(consulta, default=str)
+            )
+            return {
+                "response": {"msg": f"Se ha generado una nueva solicitud de consulta: {consulta}"},
+                "status_code": 200,
+            }
+        except Exception as e:
+            return {
+                "response": {
+                    "msg": f"Ha ocurrido un error durante la solicitud: {e}"
+                },
+                "status_code": 500,
+            }
