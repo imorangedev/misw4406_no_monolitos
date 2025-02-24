@@ -5,7 +5,7 @@ from uuid import UUID, uuid4
 from seedwork.dominio.comandos import ComandoDominio
 
 @dataclass
-class Comando(ComandoDominio):
+class EjecutarCompilacion(ComandoDominio):
     id_solicitud: UUID = field(default_factory=uuid4)
     id_cliente: UUID = None
     tipo: str = None

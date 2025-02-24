@@ -1,6 +1,6 @@
 from infraestructura.despachadores import Despachador
 from seedwork.infraestructura.utils import listar_topicos
-from dominio.comandos import Comando
+from dominio.comandos import EjecutarCompilacion
 
 
 class HandlerWorker:
@@ -9,19 +9,20 @@ class HandlerWorker:
         self.topicos = listar_topicos()
 
     def handle_mensaje_entrada(self, cuerpo: dict):
-        comando = Comando(
+        comando = EjecutarCompilacion(
             id_cliente=cuerpo["id_cliente"],
             tipo=cuerpo["tipo"],
             servicio=cuerpo["servicio"],
             imagenes=cuerpo["imagenes"]
         )
+        comando = comando.__dict__
         # Publicar evento en tópico de notificaciones
-        self.despachador.publicar_mensaje(
+        self.despachador.publicar_comando(
             comando, self.topicos["topico_salida_1"], "comando"
         )
 
         # Publicar comando en tópico de procesamiento
-        self.despachador.publicar_mensaje(
+        self.despachador.publicar_evento(
             comando, self.topicos["topico_salida_2"], "evento"
         )
 
