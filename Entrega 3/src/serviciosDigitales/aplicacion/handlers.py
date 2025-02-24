@@ -14,6 +14,7 @@ class HandlerServiciosDigitales():
             servicio=cuerpo['servicio'],
             imagenes=cuerpo['imagenes']
         )
+        comando = comando.__dict__
         return self.despachador.publicar_comando(comando, self.topicos['topico_servicios_descargas'])
     
     def handle_consulta_descarga(self, cuerpo: dict):
@@ -24,4 +25,5 @@ class HandlerServiciosDigitales():
             servicio=cuerpo['servicio'],
             id_consulta=cuerpo['id_consulta']
         )
+        consulta = consulta.__dict__
         return self.despachador.publicar_comando(consulta, self.topicos['topico_servicios_descargas'])
