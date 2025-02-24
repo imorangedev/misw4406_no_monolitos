@@ -1,13 +1,13 @@
 import pika
 import json
 from seedwork.infraestructura.utils import broker_host, listar_topicos
-from aplicacion.handlers import HandlerIntermediario
+from aplicacion.handlers import HandlerWorker
 
 class Consumidor:
     def __init__(self):
         self.connection = None
         self.channel = None
-        self.handler = HandlerIntermediario()
+        self.handler = HandlerWorker()
         
         # Establecer conexión con el broker
         try:

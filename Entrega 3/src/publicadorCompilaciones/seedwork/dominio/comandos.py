@@ -4,8 +4,8 @@ from uuid import UUID, uuid4
 
 @dataclass
 class ComandoDominio():
-    _id: UUID = field(init=True, repr=False, hash=True)
-    fecha_comando: dt = field(default_factory=dt.now)
+    _id: UUID = field(init=False, repr=False, hash=True)
+    fecha_comando: dt = field(default_factory=dt.now, init=False, repr=False)
 
     @classmethod
     def siguiente_id(self) -> UUID:
