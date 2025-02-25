@@ -1,7 +1,8 @@
 from config import Config
-from seedwork.logger_config import get_logger
-from dominio.puertos.message_publisher import MessagePublisherPort
 from dominio.models import CommandMessage
+from dominio.puertos.message_publisher import MessagePublisherPort
+from seedwork.logger_config import get_logger
+
 
 class CommandHandler:
     def __init__(self, message_publisher: MessagePublisherPort):

@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
+
 from dominio.models import BaseMessage
+
 
 class MessagePublisherPort(ABC):
     @abstractmethod
