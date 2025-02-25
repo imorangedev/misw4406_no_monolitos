@@ -32,8 +32,21 @@ Para construir los servicios, se tomó como referencia la siguiente estructura, 
 │   ├── /infraestructura # Utilidades para la infraestructura
 │       ├── utils.py     # Herramientas para conectividad, persistencia, etc.
 ```
+## Puntos de sensibilidad
+Para la arquitectura propuesta se desean trabajar 3 atributos de calidad clave: Latencia, disponibilidad y modificabilidad. Esto se debe a que la parte más crítica de cara a los clientes es la prestación de los servicios digitales de descarga, filtrado y entrenamiento de ecosistemas digitales para los usuarios Pro y Enterprise. Esto implica que el sistema debe ser confiable y estable, debe entregar una respuesta oportuna, independientemente de lo largo de sus procesos; y finalmente, debe poder ser flexible en el futuro ya que el dominio de negocio debe poder adaptarser para ofrecer un valor agregado más importante a los usuarios. Por tal razón los escenarios de calidad a probar son los siguientes:
 
-## Proyectos
+* Las peticiones de descarga de imágenes de los usuarios deben ser siempre procesadas, incluso si el componente que compila las imágenes se encuentra fuera de servicio
+* Si se está realizando el cambio a otra tecnología o librería, no es necesario modificar la lógica ni los componentes de dominio del sistema ** (Ver consideraciones técnicas)
+* Los usuarios de la plataforma de servicios digitales de STA esperan un tiempo de respuesta de confirmación en términos de segundos cuándo hacen solicitudes de descarga
+
+### Consideraciones técnicas
+Para esta entrega se realizó la construcción de varios componentes que se ejecutan de forma independiente, siguiendo una estructura de microservicios, tanto en la forma de servicios con exposición de APIs o workers activados por medio de eventos. La idea era seguir una estructura basada en eventos para cada uno y limitar las comunicaciones síncronas únicamente a las consultas a las bases de datos. 
+
+**Para este proyecto se utilizó el message broker RabbitMQ.** Es importante mencionar que, aunque está claro que el objetivo es usar Apache Pulsar como broker de eventos obligatorio para las entregas 4 y 5, se decidió implementar esta tecnología para validar la eficacia de la arquitectura hexagonal construida para STA.
+
+La instancia de RabbitMQ utilizada se desplegó en un entorno virtual expuesto en una Raspberry PI para efectos de prueba y experimentación con tecnologías de Tunneling. Esto significa que no se cuenta con una instancia de RabbitMQ en la nube y por tanto el servicio **no operará de forma automática debido a la temporalidad de las URL del servicio de PITunnel.** Si se requiere probar, se debe modificar el archivo utils.py en el seedwork de infraestructura de los servicios para incluir una URL que admita el protocolo AMPQ en el puerto 5672. **Si es necesario, informar al equipo para aprovisionar una URL válida**
+
+## Despliegue de los diferentes componentes
 
 ### compilador_imagenes
 
@@ -130,5 +143,3 @@ pipenv install
 pipenv run python application.py
 
 ```
-
-## Consideraciones técnicas
