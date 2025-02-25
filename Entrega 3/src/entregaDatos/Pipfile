@@ -10,6 +10,8 @@ flask = "*"
 pika = "*"
 waitress = "*"
 pg8000 = "*"
+logging = "*"
+pydantic  = "*"
 
 [dev-packages]
 
