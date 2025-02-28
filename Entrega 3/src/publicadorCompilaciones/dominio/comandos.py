@@ -13,3 +13,13 @@ class EjecutarCompilacion(ComandoDominio):
     imagenes: list = None
     fecha_creacion: dt = field(default_factory=dt.now)
 
+    def to_dict(self):
+        # Convertir los campos a sus representaciones en string
+        return {
+            "id_solicitud": str(self.id_solicitud),
+            "id_cliente": str(self.id_cliente),
+            "tipo": self.tipo,
+            "servicio": self.servicio,
+            "imagenes": self.imagenes,
+            "fecha_creacion": self.fecha_creacion.isoformat(),
+        }
