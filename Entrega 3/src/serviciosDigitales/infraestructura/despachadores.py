@@ -1,22 +1,18 @@
-import pika
+import pulsar
 import json
 
-from seedwork.infraestructura.utils import broker_host, listar_topicos
+from seedwork.infraestructura.utils import broker_host
 
 
 class Despachador:
     def __init__(self):
-        self.connection = pika.BlockingConnection(pika.URLParameters(broker_host()))
-        self.channel = self.connection.channel()
-
-        topicos = listar_topicos()
-        for key in topicos:
-            self.channel.queue_declare(topicos[key])
+        self.cliente = pulsar.Client(broker_host())
 
     def publicar_comando(self, comando, topico):
         try:
-            self.channel.basic_publish(
-                exchange="", routing_key=topico, body=json.dumps(comando, default=str)
+            publicador = self.cliente.create_producer(topico)
+            publicador.send(
+                json.dumps(comando, default=str).encode('utf-8')
             )
             return {
                 "response": {"msg": f"Se ha generado el siguiente comando: {comando}"},
@@ -32,8 +28,9 @@ class Despachador:
     
     def publicar_consulta(self, consulta, topico):
         try:
-            self.channel.basic_publish(
-                exchange="", routing_key=topico, body=json.dumps(consulta, default=str)
+            publicador = self.cliente.create_producer(topico)
+            publicador.send(
+                json.dumps(consulta, default=str).encode('utf-8')
             )
             return {
                 "response": {"msg": f"Se ha generado una nueva solicitud de consulta: {consulta}"},
