@@ -13,6 +13,12 @@ flask-sqlalchemy = "*"
 marshmallow-sqlalchemy = "*"
 faker = "*"
 requests = "*"
+gcloud = "*"
+google-cloud-storage = "*"
+pika = "*"
+waitress = "*"
+pg8000 = "*"
+pulsar = "*"
 
 [dev-packages]
 
