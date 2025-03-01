@@ -1,4 +1,4 @@
-from src.commands.base_command import BaseCommand
+from .base_comand import BaseCommand
 from flask import jsonify
 
 class HealthCheck(BaseCommand):
