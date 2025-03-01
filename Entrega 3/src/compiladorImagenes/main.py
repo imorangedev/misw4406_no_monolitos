@@ -1,7 +1,7 @@
-from flask import Flask, jsonify
-from sys import argv
+# from flask import Flask, jsonify
+# from sys import argv
 
-from aplicacion.comandos.image_compiler import ImageCompiler
+# from dominio.comandos.image_compiler import ImageCompiler
 
 # app = Flask(__name__)
 
@@ -23,9 +23,13 @@ from aplicacion.comandos.image_compiler import ImageCompiler
 
 import pulsar
 import json
+from flask import Flask
+
 from seedwork.infraestructura.utils import broker_host, listar_topicos
 from aplicacion.handlers import HandlerWorker
+from infraestructura.model import db
 
+# app = Flask(__name__)
 
 class Consumidor:
     def __init__(self):
@@ -93,9 +97,16 @@ class Consumidor:
                 self.client.close()
                 print("Conexión con el broker cerrada.")
 
+def config_app(db_url):
+    with app.app_context():
+        db.init_app(app)
+        db.create_all()
+
 
 if __name__ == "__main__":
     try:
+        # db_url = f"sqlite:///microservice_test.db"
+        # config_app(db_url)
         consumer = Consumidor()
         consumer.start_consuming()
     except Exception as e:
