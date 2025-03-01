@@ -18,6 +18,7 @@ google-cloud-storage = "*"
 pika = "*"
 waitress = "*"
 pg8000 = "*"
+pulsar = "*"
 
 [dev-packages]
 

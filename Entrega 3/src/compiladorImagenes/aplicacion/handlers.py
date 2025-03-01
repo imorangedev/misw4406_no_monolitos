@@ -1,30 +1,27 @@
-import pika
-import json
-from seedwork.infraestructura.utils import broker_host, listar_topicos
+from infraestructura.despachadores import Despachador
+from seedwork.infraestructura.utils import listar_topicos
+from dominio.comandos.image_compiler import ImageCompiler
 
-class Despachador:
+
+class HandlerWorker:
     def __init__(self):
-        self.connection = pika.BlockingConnection(pika.URLParameters(broker_host()))
-        self.channel = self.connection.channel()
+        self.despachador = Despachador()
+        self.topicos = listar_topicos()
 
-        topicos = listar_topicos()
-        for key in topicos:
-            self.channel.queue_declare(topicos[key])
+    def handle_mensaje_entrada(self, cuerpo: dict):
+        pass
+        comando = ImageCompiler(
+            list_image=cuerpo["ids_imagenes"],
+        )
+        comando = comando.handle(cuerpo["ids_imagenes"])
+        # # Publicar evento en tópico de notificaciones
+        # self.despachador.publicar_comando(
+        #     comando, self.topicos["topico_salida_1"], "comando"
+        # )
 
-    def publicar_mensaje(self, mensaje, topico, tipo_mensaje):
-        try:
-            # Agregar diferenciación de mensaje al contenido
-            mensaje_completo = {"tipo_mensaje": tipo_mensaje, "contenido": mensaje}
+        # # Publicar comando en tópico de procesamiento
+        # self.despachador.publicar_evento(
+        #     comando, self.topicos["topico_salida_2"], "evento"
+        # )
 
-            self.channel.basic_publish(
-                exchange="",
-                routing_key=topico,
-                body=json.dumps(mensaje_completo, default=str),
-            )
-            print(
-                f"{tipo_mensaje.capitalize()} publicado exitosamente en {topico}: {mensaje}"
-            )
-            return True
-        except Exception as e:
-            print(f"Error publicando {tipo_mensaje}: {e}")
-            return False
+        # return True
