@@ -1,73 +1,79 @@
-import pika
+import pulsar
 import json
 from seedwork.infraestructura.utils import broker_host, listar_topicos
 from aplicacion.handlers import HandlerWorker
 
+
 class Consumidor:
     def __init__(self):
-        self.connection = None
-        self.channel = None
+        self.client = None
+        self.consumer = None
         self.handler = HandlerWorker()
-        
+
         # Establecer conexión con el broker
         try:
             broker_url = broker_host()
             if not broker_url:
                 raise ValueError("El host del broker no es válido.")
 
-            self.connection = pika.BlockingConnection(pika.URLParameters(broker_url))
-            self.channel = self.connection.channel()
-            
-            # Declarar cola de entrada
+            self.client = pulsar.Client(broker_url)
+
+            # Obtener tópico de entrada
             topicos = listar_topicos()
-            self.cola_entrada = topicos['topico_entrada']
-            self.channel.queue_declare(queue=self.cola_entrada)
-            
-        except pika.exceptions.AMQPConnectionError as e:
+            self.cola_entrada = topicos["topico_entrada"]
+
+            # Crear consumidor
+            self.consumer = self.client.subscribe(
+                self.cola_entrada,
+                "publicador-compilaciones-sub",
+                consumer_type=pulsar.ConsumerType.Shared,
+            )
+
+        except Exception as e:
             print(f"Error al conectar con el broker: {e}")
 
-    def callback(self, ch, method, properties, body):
+    def procesar_mensaje(self, mensaje):
         try:
-            mensaje = json.loads(body)
-            print(f"Mensaje recibido: {mensaje}")
-            
+            # Decodificar el mensaje
+            datos = json.loads(mensaje.data().decode("utf-8"))
+            print(f"Mensaje recibido: {datos}")
+
             # Procesar mensaje y publicar a los tópicos correspondientes
-            self.handler.handle_mensaje_entrada(mensaje)
-            
+            self.handler.handle_mensaje_entrada(datos)
+
             # Confirmar procesamiento
-            ch.basic_ack(delivery_tag=method.delivery_tag)
-            
+            self.consumer.acknowledge(mensaje)
+
         except json.JSONDecodeError as e:
             print(f"Error decodificando el mensaje JSON: {e}")
-            ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
+            self.consumer.negative_acknowledge(mensaje)
         except Exception as e:
             print(f"Error procesando el mensaje: {e}")
-            ch.basic_nack(delivery_tag=method.delivery_tag)
+            self.consumer.negative_acknowledge(mensaje)
 
     def start_consuming(self):
         print(f"Esperando mensajes en {self.cola_entrada}. Para salir, presiona CTRL+C")
-        
+
         try:
-            self.channel.basic_consume(
-                queue=self.cola_entrada,
-                on_message_callback=self.callback,
-                auto_ack=False
-            )
-            
-            self.channel.start_consuming()
-            
+            while True:
+                mensaje = self.consumer.receive()
+                self.procesar_mensaje(mensaje)
+
         except KeyboardInterrupt:
             print("Apagando el consumidor...")
         except Exception as e:
             print(f"Error durante el consumo: {e}")
         finally:
-            if self.connection and self.connection.is_open:
-                self.connection.close()
+            if self.consumer:
+                self.consumer.close()
+            if self.client:
+                self.client.close()
                 print("Conexión con el broker cerrada.")
+
 
 if __name__ == "__main__":
     try:
         consumer = Consumidor()
         consumer.start_consuming()
     except Exception as e:
-        print(f"No se pudo iniciar el consumidor: {e}") 
+        print(f"No se pudo iniciar el consumidor: {e}")

@@ -7,7 +7,7 @@ name = "pypi"
 sqlalchemy = "==2.0.38"
 flask-jsonpify = "*"
 flask = "*"
-pika = "*"
+pulsar-client = "*"
 waitress = "*"
 pg8000 = "*"
 
