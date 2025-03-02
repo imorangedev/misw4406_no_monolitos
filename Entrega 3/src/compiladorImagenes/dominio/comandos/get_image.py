@@ -2,10 +2,10 @@ import json
 import base64
 from google.cloud import storage
 
-from .base_comand import Comand, ComandHandler
+#from base_comand import Comand, ComandHandler
 
 
-class GetImage(Comand):
+class GetImage():
     def __init__(self, image_id: int):
         self.image_name = image_id
         self.bucket_name = "experimento_misw4406"
@@ -29,7 +29,7 @@ class GetImage(Comand):
             print(e)
             return False
         
-class GetImageHandler(ComandHandler):
+class GetImageHandler():
     def handle(self, comand: GetImage):
         return comand.get_image(comand.image_name, comand.bucket_name)
     

@@ -1,18 +1,17 @@
 from uuid import uuid4
 
-from .base_comand import Comand, ComandHandler
 from .get_image import GetImage, GetImageHandler
 from .json_to_zip import JsonToZip, JsonToZipHandler
 from dominio.queries.createlog import CreateLog
 from infraestructura.model import db, LogsImagecompiler
 
-class ImageCompiler(Comand):
-    def __init__(self, list_image: list):
+class ImageCompiler():
+    def __init__(self, list_image):
         self.list_image = list_image
         self.zip_name = str(uuid4())
 
-    def handle(self, list_image: list):
-        
+    def handle(self, list_image):
+
         try:
             getImageHandler = GetImageHandler()
             json_list = []
