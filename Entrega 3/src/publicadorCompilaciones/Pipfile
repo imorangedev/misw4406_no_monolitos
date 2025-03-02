@@ -7,9 +7,9 @@ name = "pypi"
 sqlalchemy = "==2.0.38"
 flask-jsonpify = "*"
 flask = "*"
-pulsar-client = "*"
 waitress = "*"
 pg8000 = "*"
+pulsar-client = {extras = ["avro"], version = "*"}
 
 [dev-packages]
 
