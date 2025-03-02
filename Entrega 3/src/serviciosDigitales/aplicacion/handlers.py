@@ -40,11 +40,15 @@ class HandlerServiciosDigitales:
             schema=SolicitarConsultaCompilacionSchema,
         )
 
-    def handle_comando_crear_cliente(self, cuerpo: dict):
+    def handle_comando_crear_cliente(self, body: dict):
         comando = SolicitarRegistroClienteSchema(
-            tipo=cuerpo["tipo"],
-            servicio=cuerpo["servicio"],
-            correo_cliente=cuerpo["correo_cliente"],
+            nombre=body['nombre'],
+            email=body['email'],
+            pais =body['pais'],
+            estado=body['estado'],
+            suscripcion=body['suscripcion'],
+            tipo=body['tipo'],
+            servicio=body['servicio']
         )
         return self.despachador.publicar_comando(
             comando,
