@@ -22,3 +22,11 @@ class SolicitarConsulta(ComandoDominio):
     servicio: str = None
     id_consulta: UUID = None
     fecha_creacion: dt = field(default_factory=dt.now)
+
+@dataclass
+class SolicitarCreacionCliente(ComandoDominio):
+    id_solicitud: UUID = field(default_factory=uuid4)
+    correo_cliente: str = None
+    tipo: str = None
+    servicio: str = None
+    fecha_creacion: dt = field(default_factory=dt.now)

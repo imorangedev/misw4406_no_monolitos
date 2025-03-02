@@ -37,3 +37,15 @@ def consultar_url_descarga():
     response = HandlerServiciosDigitales().handle_consulta_descarga(consulta)
 
     return jsonify(response['response']), response['status_code']
+
+@routing.post('/registrarCliente')
+def registrar_cliente():
+    body = request.json
+    comando = {
+        'servicio': body['servicio'],
+        'tipo': body['tipo'],
+        'correo_cliente': body['correo_cliente'],
+    }
+    response = HandlerServiciosDigitales().handle_comando_crear_cliente(comando)
+
+    return jsonify(response['response']), response['status_code']

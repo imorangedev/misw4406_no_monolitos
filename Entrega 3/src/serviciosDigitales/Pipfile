@@ -10,7 +10,7 @@ flask = "*"
 pika = "*"
 waitress = "*"
 pg8000 = "*"
-pulsar-client = "*"
+pulsar-client = {extras = ["avro"], version = "*"}
 
 [dev-packages]
 
