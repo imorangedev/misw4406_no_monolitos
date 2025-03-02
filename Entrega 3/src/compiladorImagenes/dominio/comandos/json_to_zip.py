@@ -3,10 +3,10 @@ import zipfile
 from io import BytesIO
 from google.cloud import storage
 
-from .base_comand import Comand, ComandHandler
+# from base_comand import Comand, ComandHandler
 
 
-class JsonToZip(Comand):
+class JsonToZip():
     def __init__(self, jsonObjects: list, zip_name: str):
         super().__init__()
         self.jsonObjects = jsonObjects
@@ -48,6 +48,6 @@ class JsonToZip(Comand):
             print(e)
             return False
 
-class JsonToZipHandler(ComandHandler):
+class JsonToZipHandler():
     def handle(self, comand: JsonToZip):
         return comand.json_to_zip(comand.jsonObjects, comand.zip_name)

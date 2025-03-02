@@ -2,7 +2,7 @@ from os import getenv
 
 def broker_host():
     return getenv(
-        "BROKER_HOST", default="http://localhost:8080"
+        "BROKER_HOST", default="pulsar://localhost:6650"
     )
 
 def listar_topicos():

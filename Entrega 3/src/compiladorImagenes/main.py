@@ -1,35 +1,9 @@
-# from flask import Flask, jsonify
-# from sys import argv
-
-# from dominio.comandos.image_compiler import ImageCompiler
-
-# app = Flask(__name__)
-
-# def config_app(db_url):
-#     app.config["SQLALCHEMY_DATABASE_URI"] = db_url
-#     with app.app_context():
-#         db.init_app(app)
-#         db.create_all()
-
-# if __name__ == '__main__':
-#     db_url = f"sqlite:///microservice_test.db"
-#     config_app(db_url)
-#     app.run(host="0.0.0.0", port=3002, debug=True)
-
-# if __name__ == '__main__':
-#     list_image = [1, 2, 4, 7]
-#     image_compiler = ImageCompiler(list_image)
-#     image_compiler.handle(list_image)
-
 import pulsar
 import json
-from flask import Flask
 
 from seedwork.infraestructura.utils import broker_host, listar_topicos
 from aplicacion.handlers import HandlerWorker
-from infraestructura.model import db
 
-# app = Flask(__name__)
 
 class Consumidor:
     def __init__(self):
@@ -40,6 +14,7 @@ class Consumidor:
         # Establecer conexión con el broker
         try:
             broker_url = broker_host()
+            
             if not broker_url:
                 raise ValueError("El host del broker no es válido.")
 
@@ -51,9 +26,8 @@ class Consumidor:
 
             # Crear consumidor
             self.consumer = self.client.subscribe(
-                self.cola_entrada,
-                "publicador-compilaciones-sub",
-                consumer_type=pulsar.ConsumerType.Shared,
+                'persistent://public/default/mi-topic',
+                subscription_name='mi-suscripcion'
             )
 
         except Exception as e:
@@ -97,16 +71,9 @@ class Consumidor:
                 self.client.close()
                 print("Conexión con el broker cerrada.")
 
-def config_app(db_url):
-    with app.app_context():
-        db.init_app(app)
-        db.create_all()
-
 
 if __name__ == "__main__":
     try:
-        # db_url = f"sqlite:///microservice_test.db"
-        # config_app(db_url)
         consumer = Consumidor()
         consumer.start_consuming()
     except Exception as e:
