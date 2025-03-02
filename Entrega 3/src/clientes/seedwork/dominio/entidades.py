@@ -4,6 +4,7 @@ from uuid import UUID, uuid4
 
 @dataclass
 class Entidad():
+    id: UUID = field(hash=True)
     _id: UUID = field(init=False, repr=False, hash=True)
     fecha_creacion: dt = field(default_factory=dt.now, init=False, repr=False)
     fecha_actualizacion: dt = field(default_factory=dt.now, init=False, repr=False)
