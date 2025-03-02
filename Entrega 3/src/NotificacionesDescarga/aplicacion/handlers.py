@@ -1,22 +1,42 @@
+import json
 from infraestructura.despachadores import Despachador
 from seedwork.infraestructura.utils import listar_topicos
-from dominio.comandos import Comando
+from dominio.comandos import NotificarDescarga
+from infraestructura.repositorios import NotificacionRepositorioSQL
+from dominio.entidades import Notificacion
+from dominio.objetos_valor import Estado, EstadoNotificacion
 
 
 class HandlerWorker:
     def __init__(self):
         self.despachador = Despachador()
         self.topicos = listar_topicos()
+        self.repositorio = NotificacionRepositorioSQL()
 
-    def handle_mensaje_entrada(self, comando: dict):
-        # Publicar evento en tópico de notificaciones
-        self.despachador.publicar_mensaje(
-            comando, self.topicos["topico_salida_1"], "evento"
+    def handle_mensaje_entrada(self, datos: dict):
+        # Crear evento de notificación
+        evento = NotificarDescarga(
+            id_evento=datos.get("id_evento"),
+            id_solicitud=datos.get("id_solicitud"),
+            id_cliente=datos.get("id_cliente"),
+            servicio=datos.get("servicio"),
+            imagenes=datos.get("imagenes"),
+            estado=datos.get("estado", "INICIADO"),
+            fecha_creacion=datos.get("fecha_creacion"),
         )
 
-        # Publicar comando en tópico de procesamiento
-        self.despachador.publicar_mensaje(
-            comando, self.topicos["topico_salida_2"], "comando"
+        # Crear entidad de notificación
+        notificacion = Notificacion(
+            id_evento=evento.id_evento,
+            id_solicitud=evento.id_solicitud,
+            id_cliente=evento.id_cliente,
+            servicio=evento.servicio,
+            imagenes=evento.imagenes,
+            estado=Estado(EstadoNotificacion(evento.estado)),
+            fecha_creacion=evento.fecha_creacion,
         )
+
+        # Guardar en repositorio
+        self.repositorio.agregar(notificacion)
 
         return True
