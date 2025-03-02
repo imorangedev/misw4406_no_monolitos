@@ -1,53 +1,53 @@
 import json
+from dominio.entidades import Cliente
+from dominio.objetos_valor import EstadoCliente, Suscripcion
 from infraestructura.despachadores import Despachador
+from infraestructura.repositorios import RepositorioClientes
 from infraestructura.schema.comandos import (
-    SolicitarConsultaCompilacionSchema,
-    SolicitarDescargaSchema,
     SolicitarRegistroClienteSchema,
+    OperacionesClienteSchema
 )
 from seedwork.infraestructura.utils import listar_topicos
 
-
-class HandlerServiciosDigitales:
+class HandlerClientes:
     def __init__(self):
         self.despachador = Despachador()
+        self.repositorio = RepositorioClientes()
         self.topicos = listar_topicos()
 
-    def handle_solicitud_descarga(self, cuerpo: dict):
-        comando = SolicitarDescargaSchema(
-            tipo=cuerpo["tipo"],
-            servicio=cuerpo["servicio"],
-            id_cliente=str(cuerpo["id_cliente"]),
-            imagenes=json.dumps(cuerpo["imagenes"]),
+    def handle_solicitud_creacion(self, cuerpo: dict):
+        nuevo_cliente = Cliente(
+            nombre = cuerpo['nombre'],
+            email = cuerpo['email'],
+            pais = cuerpo['pais'],
+            estado = EstadoCliente(cuerpo['Estado']),
+            suscripcion = Suscripcion(cuerpo['suscripcion'])
         )
-        return self.despachador.publicar_comando(
-            comando,
-            self.topicos["topico_servicios_descargas_consultas"],
-            schema=SolicitarDescargaSchema,
-        )
-
-    def handle_consulta_descarga(self, cuerpo: dict):
-        consulta = SolicitarConsultaCompilacionSchema(
-            tipo=cuerpo["tipo"],
-            servicio=cuerpo["servicio"],
-            id_cliente=str(cuerpo["id_cliente"]),
-            correo_cliente=cuerpo["correo_cliente"],
-            id_consulta=str(cuerpo["id_consulta"]),
-        )
-        return self.despachador.publicar_consulta(
-            consulta,
-            self.topicos["topico_servicios_descargas_comandos"],
-            schema=SolicitarConsultaCompilacionSchema,
-        )
-
-    def handle_comando_crear_cliente(self, cuerpo: dict):
         comando = SolicitarRegistroClienteSchema(
+            tipo = cuerpo['tipo'],
+            servicio = cuerpo['servicio'],
+            correo_cliente = cuerpo['email']
+        )
+        self.repositorio.crear_cliente(nuevo_cliente)
+        self.despachador.publicar_comando(comando, listar_topicos['topico_clientes_eventos'], SolicitarRegistroClienteSchema)
+
+    def handle_solicitud_eliminacion(self, cuerpo: dict):
+        comando = OperacionesClienteSchema(
             tipo=cuerpo["tipo"],
             servicio=cuerpo["servicio"],
-            correo_cliente=cuerpo["correo_cliente"],
+            id_cliente=str(cuerpo["id_cliente"]),
         )
-        return self.despachador.publicar_comando(
-            comando,
-            self.topicos["topico_clientes_comandos"],
-            schema=SolicitarRegistroClienteSchema,
+        cliente = self.repositorio.obtener_cliente_por_id(cuerpo['id_cliente'])
+        self.repositorio.eliminar_cliente(cliente)
+        self.despachador.publicar_comando(comando, listar_topicos['topico_clientes_eventos'], OperacionesClienteSchema)
+
+
+    def handle_consulta_cliente(self, cuerpo: dict):
+        consulta = OperacionesClienteSchema(
+            tipo=cuerpo["tipo"],
+            servicio=cuerpo["servicio"],
+            id_cliente=str(cuerpo["id_cliente"]),
         )
+        self.despachador.publicar_consulta(consulta, listar_topicos['topico_clientes_eventos'], OperacionesClienteSchema)
+        cliente = self.repositorio.obtener_cliente_por_id(cuerpo['id_cliente'])
+        return json.dumps(cliente.__dict__)

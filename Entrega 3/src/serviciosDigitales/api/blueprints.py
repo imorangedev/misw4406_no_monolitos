@@ -41,11 +41,6 @@ def consultar_url_descarga():
 @routing.post('/registrarCliente')
 def registrar_cliente():
     body = request.json
-    comando = {
-        'servicio': body['servicio'],
-        'tipo': body['tipo'],
-        'correo_cliente': body['correo_cliente'],
-    }
-    response = HandlerServiciosDigitales().handle_comando_crear_cliente(comando)
+    response = HandlerServiciosDigitales().handle_comando_crear_cliente(body)
 
     return jsonify(response['response']), response['status_code']

@@ -11,6 +11,7 @@ pika = "*"
 waitress = "*"
 pg8000 = "*"
 pulsar-client = {extras = ["avro"], version = "*"}
+python-dotenv = "*"
 
 [dev-packages]
 
