@@ -3,9 +3,10 @@ from datetime import datetime as dt
 from uuid import UUID, uuid4
 
 @dataclass
-class ComandoDominio():
+class Entidad():
+    id: UUID = field(hash=True)
     _id: UUID = field(init=False, repr=False, hash=True)
-    fecha_comando: dt = field(default_factory=dt.now, init=False, repr=False)
+    fecha_creacion: dt = field(default_factory=dt.now, init=False, repr=False)
 
     @classmethod
     def siguiente_id(self) -> UUID:
