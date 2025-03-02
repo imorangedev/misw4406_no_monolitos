@@ -6,5 +6,7 @@ def broker_host():
 
 def listar_topicos():
     return {
-        'topico_servicios_descargas': "persistent://public/default/serviciosdigitales"
+        'topico_servicios_descargas_comandos': "persistent://public/default/serviciosdigitales_comandos",
+        'topico_servicios_descargas_consultas': "persistent://public/default/serviciosdigitales_consultas",
+        'topico_clientes_comandos': "persistent://public/default/clientescomandos"
     }
