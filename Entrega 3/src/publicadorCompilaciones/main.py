@@ -1,7 +1,9 @@
 import pulsar
-import json
+from pulsar.schema import AvroSchema
+
 from seedwork.infraestructura.utils import broker_host, listar_topicos
 from aplicacion.handlers import HandlerWorker
+from infraestructura.schema.comandos import EjecutarCompilacionSchema
 
 
 class Consumidor:
@@ -22,11 +24,12 @@ class Consumidor:
             topicos = listar_topicos()
             self.cola_entrada = topicos["topico_entrada"]
 
-            # Crear consumidor
+            # Crear consumidor con AvroSchema
             self.consumer = self.client.subscribe(
                 self.cola_entrada,
                 "publicador-compilaciones-sub",
                 consumer_type=pulsar.ConsumerType.Shared,
+                schema=AvroSchema(EjecutarCompilacionSchema),
             )
 
         except Exception as e:
@@ -34,46 +37,52 @@ class Consumidor:
 
     def procesar_mensaje(self, mensaje):
         try:
-            # Decodificar el mensaje
-            datos = json.loads(mensaje.data().decode("utf-8"))
-            print(f"Mensaje recibido: {datos}")
+            # Decodificar el mensaje usando AvroSchema
+            msg = AvroSchema(EjecutarCompilacionSchema).decode(mensaje.data())
+            data = msg.__dict__
+            print(f"Mensaje recibido: {data}")
 
             # Procesar mensaje y publicar a los tópicos correspondientes
-            self.handler.handle_mensaje_entrada(datos)
+            self.handler.handle_mensaje_entrada(data)
 
             # Confirmar procesamiento
             self.consumer.acknowledge(mensaje)
 
-        except json.JSONDecodeError as e:
-            print(f"Error decodificando el mensaje JSON: {e}")
-            self.consumer.negative_acknowledge(mensaje)
         except Exception as e:
             print(f"Error procesando el mensaje: {e}")
             self.consumer.negative_acknowledge(mensaje)
 
-    def start_consuming(self):
+    def listen(self):
         print(f"Esperando mensajes en {self.cola_entrada}. Para salir, presiona CTRL+C")
 
-        try:
-            while True:
-                mensaje = self.consumer.receive()
-                self.procesar_mensaje(mensaje)
+        while True:
+            try:
+                mensaje = self.consumer.receive(timeout_millis=3000)
+                if mensaje:
+                    self.procesar_mensaje(mensaje)
+            except pulsar._pulsar.Timeout:
+                pass
+            except KeyboardInterrupt:
+                print("Apagando el consumidor...")
+                break
+            except Exception as e:
+                print(f"Error durante el consumo: {e}")
+                if self.consumer:
+                    self.consumer.close()
+                if self.client:
+                    self.client.close()
 
-        except KeyboardInterrupt:
-            print("Apagando el consumidor...")
-        except Exception as e:
-            print(f"Error durante el consumo: {e}")
-        finally:
-            if self.consumer:
-                self.consumer.close()
-            if self.client:
-                self.client.close()
-                print("Conexión con el broker cerrada.")
+    def close(self):
+        if self.consumer:
+            self.consumer.close()
+        if self.client:
+            self.client.close()
+            print("Conexión con el broker cerrada.")
 
 
 if __name__ == "__main__":
     try:
         consumer = Consumidor()
-        consumer.start_consuming()
+        consumer.listen()
     except Exception as e:
         print(f"No se pudo iniciar el consumidor: {e}")

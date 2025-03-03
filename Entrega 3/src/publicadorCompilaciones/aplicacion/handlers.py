@@ -1,7 +1,10 @@
+import json
 from infraestructura.despachadores import Despachador
 from seedwork.infraestructura.utils import listar_topicos
 from dominio.comandos import EjecutarCompilacion
 from dominio.eventos import CompilacionIniciada
+from infraestructura.schema.comandos import EjecutarCompilacionSchema
+from infraestructura.schema.eventos import CompilacionIniciadaSchema
 
 
 class HandlerWorker:
@@ -10,15 +13,23 @@ class HandlerWorker:
         self.topicos = listar_topicos()
 
     def handle_mensaje_entrada(self, cuerpo: dict):
+        # Procesar el campo imagenes si viene como string JSON
+        imagenes = cuerpo["imagenes"]
+        if isinstance(imagenes, str):
+            try:
+                imagenes = json.loads(imagenes)
+            except json.JSONDecodeError:
+                # Si no es un JSON válido, mantenerlo como está
+                pass
+
         # Crear comando de dominio
         comando = EjecutarCompilacion(
             id_solicitud=cuerpo["id_solicitud"],
             id_cliente=cuerpo["id_cliente"],
             tipo=cuerpo["tipo"],
             servicio=cuerpo["servicio"],
-            imagenes=cuerpo["imagenes"],
+            imagenes=imagenes,
         )
-        comando_dict = comando.to_dict()
 
         # Crear evento de dominio
         evento = CompilacionIniciada(
@@ -26,19 +37,45 @@ class HandlerWorker:
             id_cliente=cuerpo["id_cliente"],
             tipo=cuerpo["tipo"],
             servicio=cuerpo["servicio"],
-            imagenes=cuerpo["imagenes"],
+            imagenes=imagenes,
             estado="INICIADO",
         )
-        evento_dict = evento.to_dict()
 
-        # Publicar comando en tópico de notificaciones usando schema
-        self.despachador.publicar_comando(
-            comando_dict, self.topicos["topico_salida_1"], "comando"
+        # Crear instancias de schema para enviar
+        comando_schema = EjecutarCompilacionSchema(
+            id_solicitud=str(comando.id_solicitud),
+            id_cliente=str(comando.id_cliente),
+            tipo=comando.tipo,
+            servicio=comando.servicio,
+            imagenes=(
+                json.dumps(comando.imagenes)
+                if isinstance(comando.imagenes, (dict, list))
+                else comando.imagenes
+            ),
         )
 
-        # Publicar evento en tópico de procesamiento usando schema
+        evento_schema = CompilacionIniciadaSchema(
+            id_evento=str(evento.id_evento),
+            id_solicitud=str(evento.id_solicitud),
+            id_cliente=str(evento.id_cliente),
+            tipo=evento.tipo,
+            servicio=evento.servicio,
+            imagenes=(
+                json.dumps(evento.imagenes)
+                if isinstance(evento.imagenes, (dict, list))
+                else evento.imagenes
+            ),
+            estado=evento.estado,
+        )
+
+        # Publicar comando en tópico de compilaciones usando schema
+        self.despachador.publicar_comando(
+            comando_schema, self.topicos["topico_salida_1"], EjecutarCompilacionSchema
+        )
+
+        # Publicar evento en tópico de notificaciones usando schema
         self.despachador.publicar_evento(
-            evento_dict, self.topicos["topico_salida_2"], "evento"
+            evento_schema, self.topicos["topico_salida_2"], CompilacionIniciadaSchema
         )
 
         return True
