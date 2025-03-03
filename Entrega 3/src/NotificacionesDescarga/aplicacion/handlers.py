@@ -1,5 +1,4 @@
 import json
-from infraestructura.despachadores import Despachador
 from seedwork.infraestructura.utils import listar_topicos
 from dominio.comandos import NotificarDescarga
 from infraestructura.repositorios import NotificacionRepositorioSQL
@@ -9,7 +8,6 @@ from dominio.objetos_valor import Estado, EstadoNotificacion
 
 class HandlerWorker:
     def __init__(self):
-        self.despachador = Despachador()
         self.topicos = listar_topicos()
         self.repositorio = NotificacionRepositorioSQL()
 
@@ -19,6 +17,7 @@ class HandlerWorker:
             id_evento=datos.get("id_evento"),
             id_solicitud=datos.get("id_solicitud"),
             id_cliente=datos.get("id_cliente"),
+            tipo=datos.get("tipo"),
             servicio=datos.get("servicio"),
             imagenes=datos.get("imagenes"),
             estado=datos.get("estado", "INICIADO"),
@@ -30,6 +29,7 @@ class HandlerWorker:
             id_evento=evento.id_evento,
             id_solicitud=evento.id_solicitud,
             id_cliente=evento.id_cliente,
+            tipo=evento.tipo,
             servicio=evento.servicio,
             imagenes=evento.imagenes,
             estado=Estado(EstadoNotificacion(evento.estado)),
