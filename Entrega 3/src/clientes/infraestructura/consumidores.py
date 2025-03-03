@@ -42,8 +42,8 @@ class ConsumidorCliente:
             try:
                 msg = self.consumidor_comandos.receive(timeout_millis=3000)
                 if msg:
-                    msg = AvroSchema(SolicitarRegistroClienteSchema).decode(msg.data())
-                    self.procesar_mensaje(msg)
+                    body = AvroSchema(SolicitarRegistroClienteSchema).decode(msg.data())
+                    self.procesar_mensaje(body)
                     self.consumidor_comandos.acknowledge(msg)
             except pulsar._pulsar.Timeout:
                 pass
@@ -51,8 +51,8 @@ class ConsumidorCliente:
             try:
                 msg = self.consumidor_consultas.receive(timeout_millis=3000)
                 if msg:
-                    msg = AvroSchema(OperacionesClienteSchema).decode(msg.data())
-                    self.procesar_mensaje(msg)
+                    body = AvroSchema(OperacionesClienteSchema).decode(msg.data())
+                    self.procesar_mensaje(body)
                     self.consumidor_consultas.acknowledge(msg)
             except pulsar._pulsar.Timeout:
                 pass
