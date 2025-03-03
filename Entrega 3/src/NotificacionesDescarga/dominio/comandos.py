@@ -20,6 +20,7 @@ class NotificarDescarga(ComandoDominio):
     id_evento: UUID = field(default_factory=uuid4)
     id_solicitud: UUID = None
     id_cliente: UUID = None
+    tipo: str = None
     servicio: str = None
     imagenes: list = None
     estado: str = "INICIADO"
@@ -30,6 +31,7 @@ class NotificarDescarga(ComandoDominio):
             "id_evento": str(self.id_evento),
             "id_solicitud": str(self.id_solicitud),
             "id_cliente": str(self.id_cliente),
+            "tipo": self.tipo,
             "servicio": self.servicio,
             "imagenes": self.imagenes,
             "estado": self.estado,

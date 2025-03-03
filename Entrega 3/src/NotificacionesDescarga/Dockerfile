@@ -11,7 +11,7 @@ COPY Pipfile Pipfile.lock /app/
 RUN pip install --no-cache-dir pipenv && \
     pipenv install --deploy
 
-# Copiar el resto de los archivos de tu aplicación
+# Copiar el resto de los archivos de la aplicación
 COPY . /app
 
 # Comando para ejecutar la aplicación

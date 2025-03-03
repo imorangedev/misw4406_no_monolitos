@@ -11,6 +11,7 @@ class NotificacionDB(Base):
     id_evento = Column(UUID, nullable=False, primary_key=True)
     id_solicitud = Column(UUID, nullable=False)
     id_cliente = Column(UUID, nullable=False)
+    tipo = Column(String, nullable=True)
     servicio = Column(String, nullable=False)
     imagenes = Column(String, nullable=False)
     estado = Column(Enum(EstadoNotificacion), nullable=False)
