@@ -1,9 +1,12 @@
 import pulsar
 from pulsar.schema import AvroSchema
+from dotenv import load_dotenv
 
 from seedwork.infraestructura.utils import broker_host, listar_topicos
 from aplicacion.handlers import HandlerWorker
 from infraestructura.schema.comandos import EjecutarCompilacionSchema
+
+load_dotenv(".env")
 
 
 class Consumidor:

@@ -3,7 +3,7 @@ from seedwork.infraestructura.utils import listar_topicos
 from dominio.comandos import NotificarDescarga
 from infraestructura.repositorios import NotificacionRepositorioSQL
 from dominio.entidades import Notificacion
-from dominio.objetos_valor import Estado, EstadoNotificacion
+from dominio.objetos_valor import EstadoNotificacion
 
 
 class HandlerWorker:
@@ -32,7 +32,7 @@ class HandlerWorker:
             tipo=evento.tipo,
             servicio=evento.servicio,
             imagenes=evento.imagenes,
-            estado=Estado(EstadoNotificacion(evento.estado)),
+            estado=EstadoNotificacion(evento.estado),
             fecha_creacion=evento.fecha_creacion,
         )
 
