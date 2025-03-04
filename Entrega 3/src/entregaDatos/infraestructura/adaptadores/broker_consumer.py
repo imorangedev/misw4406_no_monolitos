@@ -38,7 +38,7 @@ class BrokerConsumer(MessageConsumerPort):
                 if msg:
                     body = AvroSchema(CommandMessage).decode(msg.data())
                     self._process_messages(body)
-                    """ self.command_consumer.acknowledge(msg) """
+                    self.command_consumer.acknowledge(msg)
             except pulsar._pulsar.Timeout:
                 pass
             
@@ -47,7 +47,7 @@ class BrokerConsumer(MessageConsumerPort):
                 if msg:
                     body = AvroSchema(QueryMessage).decode(msg.data())
                     self._process_messages(body)
-                    """ self.query_consumer.acknowledge(msg) """
+                    self.query_consumer.acknowledge(msg)
             except pulsar._pulsar.Timeout:
                 pass
     
