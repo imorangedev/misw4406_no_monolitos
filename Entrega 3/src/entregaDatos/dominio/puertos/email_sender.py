@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 
-class MessagePublisherPort(ABC):
+
+class EmailSenderPort(ABC):
     @abstractmethod
-    def publish(self) -> None:
+    def send_email(self):
         pass
+
