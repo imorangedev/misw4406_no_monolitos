@@ -32,8 +32,8 @@ class EmailSender(EmailSenderPort):
                 ]
             }
             result = mailjet.send.create(data=data)
-            print(result.status_code)
-            print(result.json())
+            status_code=result.status_code
+            self.logger.info(f"Send email status code: {status_code}")
         except Exception as e:
             self.logger.error(f"Error enviando email: {e}", exc_info=True)
             raise

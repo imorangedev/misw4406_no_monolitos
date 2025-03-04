@@ -1,5 +1,7 @@
 from dotenv import load_dotenv
-import os
+from os import getenv
+
+
 
 load_dotenv()
 
@@ -16,4 +18,4 @@ class Config:
     BROKER_QUERY_SUBCRIPTION = getenv('BROKER_QUERY_SUBCRIPTION')
     EMAIL_API_KEY=getenv("EMAIL_API_KEY")
     EMAIL_API_SECRET=getenv("EMAIL_API_SECRET")
-    FROM_EMAIL=getenv("EMAIL_API_SECRET")
+    FROM_EMAIL=getenv("FROM_EMAIL")
