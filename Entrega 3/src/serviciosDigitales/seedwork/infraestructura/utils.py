@@ -9,5 +9,5 @@ def listar_topicos():
         'topico_servicios_descargas_comandos': "persistent://public/default/serviciosdigitales_comandos",
         'topico_servicios_descargas_consultas': "persistent://public/default/serviciosdigitales_consultas",
         'topico_clientes_comandos': "persistent://public/default/clientescomandos",
-        'topico_clientes_consultas': "persistent://public/default/clientesconsultas"
+        'topico_clientes_solicitudes_consulta': "persistent://public/default/clientessolicitudesconsulta",
     }
