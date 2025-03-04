@@ -15,4 +15,4 @@ RUN pip install --no-cache-dir pipenv && \
 COPY . /app
 
 # Comando para ejecutar la aplicación
-CMD ["pipenv", "run", "python", "main.py"]
+CMD ["pipenv", "run", "python", "application.py"]
