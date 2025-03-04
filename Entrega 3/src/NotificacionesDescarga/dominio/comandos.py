@@ -27,6 +27,12 @@ class NotificarDescarga(ComandoDominio):
     fecha_creacion: dt = field(default_factory=dt.now)
 
     def to_dict(self):
+        # Asegurar que fecha_creacion sea un objeto datetime
+        if isinstance(self.fecha_creacion, (int, float)):
+            fecha = dt.fromtimestamp(self.fecha_creacion / 1000)
+        else:
+            fecha = self.fecha_creacion
+
         return {
             "id_evento": str(self.id_evento),
             "id_solicitud": str(self.id_solicitud),
@@ -35,5 +41,7 @@ class NotificarDescarga(ComandoDominio):
             "servicio": self.servicio,
             "imagenes": self.imagenes,
             "estado": self.estado,
-            "fecha_creacion": self.fecha_creacion.isoformat(),
+            "fecha_creacion": (
+                fecha.isoformat() if hasattr(fecha, "isoformat") else str(fecha)
+            ),
         }
