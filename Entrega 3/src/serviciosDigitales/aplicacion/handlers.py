@@ -4,6 +4,7 @@ from infraestructura.schema.comandos import (
     SolicitarConsultaCompilacionSchema,
     SolicitarDescargaSchema,
     SolicitarRegistroClienteSchema,
+    SolicitarConsultaClienteSchema
 )
 from seedwork.infraestructura.utils import listar_topicos
 
@@ -18,11 +19,11 @@ class HandlerServiciosDigitales:
             tipo=cuerpo["tipo"],
             servicio=cuerpo["servicio"],
             id_cliente=str(cuerpo["id_cliente"]),
-            imagenes=json.dumps(cuerpo["imagenes"]),
+            data=json.dumps(cuerpo["data"]),
         )
         return self.despachador.publicar_comando(
             comando,
-            self.topicos["topico_servicios_descargas_consultas"],
+            self.topicos["topico_servicios_descargas_comandos"],
             schema=SolicitarDescargaSchema,
         )
 
@@ -32,26 +33,38 @@ class HandlerServiciosDigitales:
             servicio=cuerpo["servicio"],
             id_cliente=str(cuerpo["id_cliente"]),
             correo_cliente=cuerpo["correo_cliente"],
-            id_consulta=str(cuerpo["id_consulta"]),
+            id_consulta=str(cuerpo["data"]),
         )
         return self.despachador.publicar_consulta(
             consulta,
-            self.topicos["topico_servicios_descargas_comandos"],
+            self.topicos["topico_servicios_descargas_consultas"],
             schema=SolicitarConsultaCompilacionSchema,
         )
 
     def handle_comando_crear_cliente(self, body: dict):
         comando = SolicitarRegistroClienteSchema(
-            nombre=body['nombre'],
-            email=body['email'],
-            pais =body['pais'],
-            estado=body['estado'],
-            suscripcion=body['suscripcion'],
-            tipo=body['tipo'],
-            servicio=body['servicio']
+            nombre = body['nombre'],
+            email= body['email'],
+            pais = body['pais'],
+            estado = body['estado'],
+            suscripcion = body['suscripcion'],
+            tipo = body['tipo'],
+            servicio = body['servicio']
         )
         return self.despachador.publicar_comando(
             comando,
             self.topicos["topico_clientes_comandos"],
             schema=SolicitarRegistroClienteSchema,
+        )
+    
+    def handle_consulta_cliente(self, tipo, id_cliente):
+        consulta = SolicitarConsultaClienteSchema(
+            id_cliente = id_cliente,
+            tipo = tipo,
+            servicio = "consultar_cliente"
+        )
+        return self.despachador.publicar_consulta(
+            consulta,
+            self.topicos["topico_clientes_solicitudes_consulta"],
+            SolicitarConsultaClienteSchema
         )

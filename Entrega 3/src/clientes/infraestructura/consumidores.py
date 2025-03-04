@@ -3,7 +3,7 @@ from pulsar.schema import AvroSchema
 
 from aplicacion.handlers import HandlerClientes
 from infraestructura.despachadores import Despachador
-from infraestructura.schema.comandos import SolicitarRegistroClienteSchema, OperacionesClienteSchema
+from infraestructura.schema.comandos import SolicitarRegistroClienteSchema, SolicitarConsultaClienteSchema
 from seedwork.infraestructura.utils import broker_host, listar_topicos
 
 class ConsumidorCliente:
@@ -21,10 +21,10 @@ class ConsumidorCliente:
         )
 
         self.consumidor_consultas = self.cliente.subscribe(
-            topicos['topico_clientes_consultas'],
+            topicos['topico_clientes_solicitudes_consulta'],
             subscription_name='clientes-consultas',
             consumer_type=pulsar.ConsumerType.Shared,
-            schema=AvroSchema(OperacionesClienteSchema)
+            schema=AvroSchema(SolicitarConsultaClienteSchema)
         )
     
     def procesar_mensaje(self, msg):
@@ -32,15 +32,15 @@ class ConsumidorCliente:
         servicio = data['servicio']
         if servicio == 'crear_cliente':
             HandlerClientes().handle_solicitud_creacion(data)
-        elif servicio == 'eliminar_cliente':
-            HandlerClientes().handle_consulta_cliente(data)
+        # elif servicio == 'eliminar_cliente':
+        #     HandlerClientes().handle_solicitud_eliminacion(data)
         elif servicio == 'consultar_cliente':
             HandlerClientes().handle_consulta_cliente(data)
 
     def listen(self):
         while True:
             try:
-                msg = self.consumidor_comandos.receive(timeout_millis=3000)
+                msg = self.consumidor_comandos.receive(timeout_millis=2000)
                 if msg:
                     body = AvroSchema(SolicitarRegistroClienteSchema).decode(msg.data())
                     self.procesar_mensaje(body)
@@ -48,10 +48,19 @@ class ConsumidorCliente:
             except pulsar._pulsar.Timeout:
                 pass
             
+            # try:
+            #     msg = self.consumidor_consultas.receive(timeout_millis=2000)
+            #     if msg:
+            #         body = AvroSchema(OperacionesClienteSchema).decode(msg.data())
+            #         self.procesar_mensaje(body)
+            #         self.consumidor_consultas.acknowledge(msg)
+            # except pulsar._pulsar.Timeout:
+            #     pass
+
             try:
-                msg = self.consumidor_consultas.receive(timeout_millis=3000)
+                msg = self.consumidor_consultas.receive(timeout_millis=2000)
                 if msg:
-                    body = AvroSchema(OperacionesClienteSchema).decode(msg.data())
+                    body = AvroSchema(SolicitarConsultaClienteSchema).decode(msg.data())
                     self.procesar_mensaje(body)
                     self.consumidor_consultas.acknowledge(msg)
             except pulsar._pulsar.Timeout:

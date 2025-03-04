@@ -22,9 +22,13 @@ class RepositorioClientesSQLAlchemy(RepositorioClientes):
     def crear_cliente(self, entidad: Cliente) -> None:
         dto = self.mapeador.entidad_a_dto(entidad)
         self.session.add(dto)
+        self.session.flush()
+        self.session.refresh(dto)
         self.session.commit()
     
     def eliminar_cliente(self, entidad: Cliente) -> None:
         dto = self.mapeador.entidad_a_dto(entidad)
-        self.session.delete(dto)
+        self.session.add(dto)
+        self.session.flush()
+        self.session.refresh(dto)
         self.session.commit()

@@ -7,24 +7,22 @@ class ObjetoValor:
 
 @dataclass(frozen=True)
 class Nombre(ObjetoValor):
-    nombres: str
-    apellidos: str
+    nombre: str
 
 @dataclass(frozen=True)
 class Email(ObjetoValor):
     direccion: str
-    dominio: str
 
 @dataclass(frozen=True)
 class EstadoCliente(Enum):
-    ACTIVO = "Activo"
-    SUSPENDIDO = "Suspendido"
+    ACTIVO = "ACTIVO"
+    SUSPENDIDO = "SUSPENDIDO"
 
 @dataclass(frozen=True)
 class Suscripcion(Enum):
-    STANDARD = "Standard"
-    PRO = "Pro"
-    ENTERPRISE = "Enterprise"
+    STANDARD = "STANDARD"
+    PRO = "PRO"
+    ENTERPRISE = "ENTERPRISE"
 
 @dataclass(frozen=True)
 class Pais(ObjetoValor):

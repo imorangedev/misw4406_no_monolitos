@@ -18,7 +18,7 @@ def descargar_imagenes():
         'id_cliente': UUID(body['id_cliente']),
         'tipo': body['tipo'],
         'servicio': body['servicio'],
-        'imagenes': body['imagenes']
+        'data': body['data']
     }
     response = HandlerServiciosDigitales().handle_solicitud_descarga(comando)
 
@@ -32,7 +32,7 @@ def consultar_url_descarga():
         'correo_cliente': body['correo_cliente'],
         'tipo': body['tipo'],
         'servicio': body['servicio'],
-        'id_consulta': UUID(body['id_consulta'])
+        'data': body['data']
     }
     response = HandlerServiciosDigitales().handle_consulta_descarga(consulta)
 
@@ -42,5 +42,9 @@ def consultar_url_descarga():
 def registrar_cliente():
     body = request.json
     response = HandlerServiciosDigitales().handle_comando_crear_cliente(body)
+    return jsonify(response['response']), response['status_code']
 
+@routing.get('/validarCliente/<tipo>/<id_cliente>')
+def consultar_cliente(tipo, id_cliente):
+    response = HandlerServiciosDigitales().handle_consulta_cliente(tipo, id_cliente)
     return jsonify(response['response']), response['status_code']

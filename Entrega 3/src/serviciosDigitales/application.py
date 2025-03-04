@@ -1,7 +1,10 @@
+from dotenv import load_dotenv
 from flask import Flask
 from waitress import serve
 
 from api.blueprints import routing
+
+load_dotenv('.env')
 
 def create_app():
     app = Flask('__main__')
