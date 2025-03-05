@@ -16,15 +16,16 @@ class SolicitarRegistroClienteSchema(Record):
     def __init__(self, *args, id_solicitud=None, fecha_creacion=None, **kwargs):
         super().__init__(*args, id_solicitud=id_solicitud, fecha_creacion=fecha_creacion, **kwargs)
 
-# class OperacionesClienteSchema(Record):
-#     id_solicitud = String(default=str(uuid.uuid4()))    
-#     tipo = String()
-#     servicio = String()    
-#     fecha_creacion = Long(default=int(time.time()*1000))
-#     id_cliente = String()
+class SolicitarConsultaClienteSchema(Record):
+    id_solicitud = String(default=str(uuid.uuid4()))
+    fecha_creacion = Long(default=int(time.time()*1000))
+    id_cliente = String()
+    tipo = String()
+    servicio = String()
+    data = String()
 
-#     def __init__(self, *args, id_solicitud=None, fecha_creacion=None, **kwargs):
-#         super().__init__(*args, id_solicitud=id_solicitud, fecha_creacion=fecha_creacion, **kwargs)
+    def __init__(self, *args, id_solicitud=None, fecha_creacion=None, **kwargs):
+        super().__init__(*args, id_solicitud=id_solicitud, fecha_creacion=fecha_creacion, **kwargs)
 
 class ConsultaClienteSchema(Record):
     id_solicitud = String(default=str(uuid.uuid4()))
@@ -36,16 +37,6 @@ class ConsultaClienteSchema(Record):
     tipo = String()
     servicio = String()
     data = String()
-
-    def __init__(self, *args, id_solicitud=None, fecha_creacion=None, **kwargs):
-        super().__init__(*args, id_solicitud=id_solicitud, fecha_creacion=fecha_creacion, **kwargs)
-
-class SolicitarConsultaClienteSchema(Record):
-    id_solicitud = String(default=str(uuid.uuid4()))
-    fecha_creacion = Long(default=int(time.time()*1000))
-    id_cliente = String()
-    tipo = String()
-    servicio = String()
 
     def __init__(self, *args, id_solicitud=None, fecha_creacion=None, **kwargs):
         super().__init__(*args, id_solicitud=id_solicitud, fecha_creacion=fecha_creacion, **kwargs)

@@ -57,11 +57,12 @@ class HandlerServiciosDigitales:
             schema=SolicitarRegistroClienteSchema,
         )
     
-    def handle_consulta_cliente(self, tipo, id_cliente):
+    def handle_consulta_cliente(self, cuerpo):
         consulta = SolicitarConsultaClienteSchema(
-            id_cliente = id_cliente,
-            tipo = tipo,
-            servicio = "consultar_cliente"
+            id_cliente = cuerpo['id_cliente'],
+            tipo = cuerpo['tipo'],
+            servicio = cuerpo['servicio'],
+            data = cuerpo['data']
         )
         return self.despachador.publicar_consulta(
             consulta,
