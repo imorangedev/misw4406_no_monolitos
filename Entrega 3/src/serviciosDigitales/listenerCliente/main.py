@@ -4,7 +4,7 @@ from pulsar.schema import AvroSchema
 from dotenv import load_dotenv
 
 from schema.comandos import ConsultaClienteSchema
-from utils import broker_host, listar_topicos
+from utils import broker_host, listar_topicos, api_host
 
 load_dotenv('.env')
 
@@ -32,7 +32,7 @@ class ConsumidorCliente:
                         "servicio": data['servicio'],
                         "data": data['data']
                         }
-                r = requests.post(url='http://localhost:3000/servicios/webhooks/solicitudDescarga', json=body)
+                r = requests.post(url=f'{api_host()}/servicios/webhooks/solicitudDescarga', json=body)
                 print(r.status_code)
             elif tipo == 'Consulta':
                 body = {
@@ -42,7 +42,7 @@ class ConsumidorCliente:
                         "servicio": data['servicio'],
                         "data": data['data']
                         }
-                r = requests.post(url='http://localhost:3000/servicios/webhooks/consultaDescarga', json=body)
+                r = requests.post(url=f'{api_host()}/servicios/webhooks/consultaDescarga', json=body)
                 print(r.status_code)
 
     def listen(self):
