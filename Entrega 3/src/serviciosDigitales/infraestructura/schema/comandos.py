@@ -45,6 +45,7 @@ class SolicitarConsultaClienteSchema(Record):
     id_cliente = String()
     tipo = String()
     servicio = String()
+    data = String()
 
     def __init__(self, *args, id_solicitud=None, fecha_creacion=None, **kwargs):
         super().__init__(*args, id_solicitud=id_solicitud, fecha_creacion=fecha_creacion, **kwargs)

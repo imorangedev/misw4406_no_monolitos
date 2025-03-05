@@ -29,12 +29,11 @@ class ConsumidorCliente:
     
     def procesar_mensaje(self, msg):
         data = msg.__dict__
+        tipo = data['tipo']
         servicio = data['servicio']
-        if servicio == 'crear_cliente':
+        if tipo == 'Comando' and servicio == 'crear_cliente':
             HandlerClientes().handle_solicitud_creacion(data)
-        # elif servicio == 'eliminar_cliente':
-        #     HandlerClientes().handle_solicitud_eliminacion(data)
-        elif servicio == 'consultar_cliente':
+        elif servicio == 'Descargar':
             HandlerClientes().handle_consulta_cliente(data)
 
     def listen(self):

@@ -44,27 +44,16 @@ class HandlerClientes:
             pass
         self.despachador.publicar_comando(comando, listar_topicos()['topico_clientes_eventos'], SolicitarRegistroClienteSchema)
 
-    # def handle_solicitud_eliminacion(self, cuerpo: dict):
-    #     comando = OperacionesClienteSchema(
-    #         tipo=cuerpo["tipo"],
-    #         servicio=cuerpo["servicio"],
-    #         id_cliente=str(cuerpo["id_cliente"]),
-    #     )
-    #     cliente = self.repositorio.obtener_cliente_por_id(cuerpo['id_cliente'])
-    #     self.repositorio.eliminar_cliente(cliente)
-    #     self.despachador.publicar_comando(comando, listar_topicos()['topico_clientes_eventos'], OperacionesClienteSchema)
-
-
     def handle_consulta_cliente(self, cuerpo: dict):
-        cliente = self.repositorio.obtener_cliente_por_id(cuerpo['id_cliente'])
+        cliente = self.repositorio.obtener_cliente_por_id(cuerpo['id_cliente'].strip())
         consulta = ConsultaClienteSchema(
-            id = cuerpo['id_cliente'],
+            id = cuerpo['id_cliente'].strip(),
             nombre = cliente.nombre.nombre,
             email = cliente.email.direccion,
             estado = cliente.estado.name,
             tipo = cuerpo['tipo'],
             servicio = cuerpo['servicio'],
-            data = ""
+            data = cuerpo['data']
         )
         self.despachador.publicar_consulta(consulta, listar_topicos()['topico_clientes_consultas'], ConsultaClienteSchema)        
         return json.dumps(consulta.__dict__)

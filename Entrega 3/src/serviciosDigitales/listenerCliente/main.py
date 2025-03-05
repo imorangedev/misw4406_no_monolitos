@@ -25,14 +25,14 @@ class ConsumidorCliente:
         tipo = data['tipo']
         estado = data['estado']
         if estado == 'ACTIVO':
-            if tipo == 'Descarga':
+            if tipo == 'Comando':
                 body = {
                         "id_cliente": data['id'],
                         "tipo": "Comando",
                         "servicio": data['servicio'],
                         "data": data['data']
                         }
-                r = requests.post(url='http://localhost:3000/servicios/descargarImagenes', json=body)
+                r = requests.post(url='http://localhost:3000/servicios/webhooks/solicitudDescarga', json=body)
                 print(r.status_code)
             elif tipo == 'Consulta':
                 body = {
@@ -42,7 +42,7 @@ class ConsumidorCliente:
                         "servicio": data['servicio'],
                         "data": data['data']
                         }
-                r = requests.post(url='http://localhost:3000/servicios/consultarDescarga', json=body)
+                r = requests.post(url='http://localhost:3000/servicios/webhooks/consultaDescarga', json=body)
                 print(r.status_code)
 
     def listen(self):

@@ -1,6 +1,5 @@
 from flask import request
 from flask_jsonpify import jsonify
-from uuid import UUID
 
 from aplicacion.handlers import HandlerServiciosDigitales
 from seedwork.presentacion.api import crear_blueprint
@@ -15,26 +14,24 @@ def health_check():
 def descargar_imagenes():
     body = request.json
     comando = {
-        'id_cliente': UUID(body['id_cliente']),
+        'id_cliente': body['id_cliente'].strip(),
         'tipo': body['tipo'],
         'servicio': body['servicio'],
-        'data': body['data']
+        'data': str(body['data'])
     }
-    response = HandlerServiciosDigitales().handle_solicitud_descarga(comando)
-
+    response = HandlerServiciosDigitales().handle_consulta_cliente(comando)
     return jsonify(response['response']), response['status_code']
 
 @routing.post('/consultarDescarga')
 def consultar_url_descarga():
     body = request.json
     consulta = {
-        'id_cliente': UUID(body['id_cliente']),
-        'correo_cliente': body['correo_cliente'],
+        'id_cliente': body['id_cliente'],
         'tipo': body['tipo'],
         'servicio': body['servicio'],
         'data': body['data']
     }
-    response = HandlerServiciosDigitales().handle_consulta_descarga(consulta)
+    response = HandlerServiciosDigitales().handle_consulta_cliente(consulta)
 
     return jsonify(response['response']), response['status_code']
 
@@ -47,4 +44,16 @@ def registrar_cliente():
 @routing.get('/validarCliente/<tipo>/<id_cliente>')
 def consultar_cliente(tipo, id_cliente):
     response = HandlerServiciosDigitales().handle_consulta_cliente(tipo, id_cliente)
+    return jsonify(response['response']), response['status_code']
+
+@routing.post('webhooks/solicitudDescarga')
+def webhook_solicitud_descarga():
+    body = request.json
+    response = HandlerServiciosDigitales().handle_solicitud_descarga(body)
+    return jsonify(response['response']), response['status_code']
+
+@routing.post('webhooks/consultaDescarga')
+def webhook_consulta_descarga():
+    body = request.json
+    response = HandlerServiciosDigitales().handle_consulta_descarga(body)
     return jsonify(response['response']), response['status_code']
