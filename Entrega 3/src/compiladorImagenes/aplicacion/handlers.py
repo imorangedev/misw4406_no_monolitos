@@ -12,10 +12,16 @@ class HandlerWorker:
 
     def handle_mensaje_entrada(self, cuerpo: dict):
 
-        msg_received = cuerpo["ids_imagenes"]
-        transformed_message = ast.literal_eval(msg_received)
+        if cuerpo["imagenes"]:
 
-        comando = ImageCompiler(
-            list_image=transformed_message
-        )
-        comando = comando.handle(transformed_message)
+            msg_received = cuerpo["imagenes"]
+            transformed_message = ast.literal_eval(msg_received)
+
+            comando = ImageCompiler(
+                list_image=transformed_message
+            )
+            comando = comando.handle(transformed_message)
+        
+        else: 
+            print('no image to compile')
+            pass
