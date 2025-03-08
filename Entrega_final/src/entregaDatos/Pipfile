@@ -1,0 +1,21 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+sqlalchemy = "==2.0.38"
+flask-jsonpify = "*"
+flask = "*"
+waitress = "*"
+pg8000 = "*"
+logging = "*"
+pydantic  = "*"
+pulsar-client = {extras = ["avro"], version = "*"}
+mailjet_rest = "*"
+python-dotenv = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.12"
