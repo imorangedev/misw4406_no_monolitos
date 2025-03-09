@@ -19,6 +19,7 @@ pika = "*"
 waitress = "*"
 pg8000 = "*"
 pulsar-client = "*"
+dotenv = "*"
 
 [dev-packages]
 
