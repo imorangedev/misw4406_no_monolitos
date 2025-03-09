@@ -8,7 +8,7 @@ from google.cloud import storage
 class GetImage():
     def __init__(self, image_id: int):
         self.image_name = image_id
-        self.bucket_name = "experimento_misw4406"
+        self.bucket_name = "monolitos_misw4406"
 
 
     def get_image(self, image_id: int, bucket_name: str) -> StopAsyncIteration:
@@ -23,6 +23,7 @@ class GetImage():
                                      "format": "jpg",
                                      "size": len(image_bytes),
                                      "image": image_byase64})
+
             return image_json
 
         except Exception as e:
