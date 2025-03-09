@@ -6,7 +6,9 @@ from os import getenv
 load_dotenv()
 
 class Config:
-    SQLALCHEMY_DATABASE_URI = f"postgresql+pg8000://{getenv('USER')}:{getenv('PASSWORD')}@{getenv('SERVER')}/{getenv('DATABASE')}"
+    SQLALCHEMY_DATABASE_URI = (
+        f"postgresql+pg8000://{getenv("DB_USER","postgres")}:{getenv("DB_PASSWORD","cuartetodevops")}@{getenv("DB_SERVER","34.45.41.49")}/{getenv("DB_NAME","postgres")}"
+    )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     BROKER_HOST = getenv(
         'BROKER_HOST')
