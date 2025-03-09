@@ -1,3 +1,4 @@
+import os
 from os import getenv
 
 def broker_host(environment):
@@ -8,7 +9,7 @@ def broker_host(environment):
         )
     else:
         return getenv(
-            'BROKER_HOST', default="http://35.232.12.233:3000"
+            'BROKER_HOST', default="pulsar://localhost:6650"
         )
 
 def listar_topicos(environment):

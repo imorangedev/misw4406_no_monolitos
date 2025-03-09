@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask
 
 from dotenv import load_dotenv
@@ -6,17 +8,12 @@ from os import getenv
 from sys import argv
 
 from infraestructura.model import db
-from config import Config
 from infraestructura.consumidores import Consumidor
 from infraestructura.model import db
-
-app = Flask(__name__)
 
 
 if __name__ == "__main__":
     try:
-        # consumer = Consumidor()
-        # consumer.start_consuming()
 
         if argv[1] == "develop":
             print('start development environment')
@@ -29,14 +26,16 @@ if __name__ == "__main__":
             consumer.start_consuming()
 
         else:
-            print("No se pudo iniciar el consumidor")
-            # load_dotenv(".env.production")
-            # database_URI = Config().SQLALCHEMY_DATABASE_URI
-            # print(database_URI)
-            # engine = create_engine(database_URI)
+            load_dotenv(".env")
+            DB_NAME = os.environ.get('DATABASE')
+            DB_SERVER = os.environ.get('SERVER')
+            DB_USER = 'postgres'
+            DB_PASSWORD = os.environ.get('PASSWORD')
+            database_URI = f"postgresql+pg8000://{DB_USER}:{DB_PASSWORD}@{DB_SERVER}/{DB_NAME}"
+            engine = create_engine(database_URI)
             # db.metadata.create_all(engine)
-            # consumer = Consumidor()
-            # consumer.start_consuming()
+            consumer = Consumidor(environment='prod', engine=engine)
+            consumer.start_consuming()
 
     except Exception as e:
         print(f"No se pudo iniciar el consumidor: {e}")
