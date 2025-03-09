@@ -5,17 +5,21 @@ from config import Config
 from dominio.puertos.email_sender import EmailSenderPort
 from dominio.puertos.message_consumer import MessageConsumerPort
 from dominio.puertos.message_publisher import MessagePublisherPort
+from dominio.puertos.compilation_repository import CompilationRepositoryPort
 from infraestructura.adaptadores.broker_consumer import BrokerConsumer
 from infraestructura.adaptadores.broker_publisher import BrokerPublisher
+from infraestructura.adaptadores.compilation_repository import CompilationRepository
 from infraestructura.adaptadores.email_sender import EmailSender
+
 
 if __name__ == "__main__":
 
     message_publisher: MessagePublisherPort = BrokerPublisher()
     command_handler = CommandHandler(message_publisher)
 
+    compilation_repository: CompilationRepositoryPort = CompilationRepository(Config.SQLALCHEMY_DATABASE_URI)
     email_sender: EmailSenderPort = EmailSender()
-    query_handler = QueryHandler(email_sender)
+    query_handler = QueryHandler(email_sender, compilation_repository)
 
     use_case_process_message = useCaseProcessMessage(command_handler,query_handler)
     

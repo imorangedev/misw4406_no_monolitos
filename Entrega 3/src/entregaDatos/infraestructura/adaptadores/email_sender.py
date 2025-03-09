@@ -1,7 +1,7 @@
 from mailjet_rest import Client
 from config import Config
 from dominio.puertos.email_sender import EmailSenderPort
-from seedwork.email_template import email_template_no_notification, email_subject_no_notification
+from seedwork.email_template import email_template_no_notification, email_subject_notification, email_template_notification
 from seedwork.logger_config import get_logger
 
 
@@ -12,9 +12,12 @@ class EmailSender(EmailSenderPort):
         self.api_secret=Config.EMAIL_API_SECRET
         self.from_email = Config.FROM_EMAIL
 
-    def send_email(self, recipient_email: str) -> None:
+    def send_email(self, recipient_email: str, validation: bool) -> None:
         try:
             mailjet = Client(auth=(self.api_key, self.api_secret), version='v3.1')
+
+            html_template = email_template_no_notification if validation == False else email_template_notification
+
             data = {
                 'Messages': [
                     {
@@ -26,11 +29,12 @@ class EmailSender(EmailSenderPort):
                                 "Email": recipient_email,
                             }
                         ],
-                        "Subject": email_subject_no_notification,
-                        "HTMLPart": email_template_no_notification
+                        "Subject": email_subject_notification,
+                        "HTMLPart": html_template
                     }
                 ]
             }
+
             result = mailjet.send.create(data=data)
             status_code=result.status_code
             self.logger.info(f"Send email status code: {status_code}")

@@ -11,6 +11,7 @@ class useCaseProcessMessage:
 
     def execute(self, message):
         try:
+            self.logger.info(message)
             print("\n")
             type = message.tipo
             if(type =="Comando"):
