@@ -10,4 +10,15 @@ email_template_no_notification = """<html>
 </html>
 """
 
-email_subject_no_notification = "📦 Resultado de proceso de consulta"
+email_template_notification = """<html>
+  <body>
+    <p>Estimado/a usuario,</p>
+    <p>Sus datos ya están listos para su descarga.</p>
+    <p>Si necesita asistencia, no dude en ponerse en contacto con nuestro equipo de soporte.</p>
+    <p>Atentamente,</p>
+    <p>El equipo de soporte</p>
+  </body>
+</html>
+"""
+
+email_subject_notification = "📦 Resultado de proceso de consulta"
