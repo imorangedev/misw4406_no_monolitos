@@ -10,6 +10,8 @@ from config import Config
 from infraestructura.consumidores import Consumidor
 from infraestructura.model import db
 
+app = Flask(__name__)
+
 
 if __name__ == "__main__":
     try:
@@ -17,21 +19,24 @@ if __name__ == "__main__":
         # consumer.start_consuming()
 
         if argv[1] == "develop":
+            print('start development environment')
+            print(argv[1])
             load_dotenv(".env.dev")
             db_url = f"sqlite:///microservice_test.db"
             engine = create_engine(db_url)
-            db.metadata.create_all(engine)
-            consumer = Consumidor("develop")
+            # db.metadata.create_all(engine)
+            consumer = Consumidor(environment=argv[1], engine=engine)
             consumer.start_consuming()
 
         else:
-            load_dotenv(".env.production")
-            database_URI = Config().SQLALCHEMY_DATABASE_URI
-            print(database_URI)
-            engine = create_engine(database_URI)
-            db.metadata.create_all(engine)
-            consumer = Consumidor()
-            consumer.start_consuming()
+            print("No se pudo iniciar el consumidor")
+            # load_dotenv(".env.production")
+            # database_URI = Config().SQLALCHEMY_DATABASE_URI
+            # print(database_URI)
+            # engine = create_engine(database_URI)
+            # db.metadata.create_all(engine)
+            # consumer = Consumidor()
+            # consumer.start_consuming()
 
     except Exception as e:
         print(f"No se pudo iniciar el consumidor: {e}")

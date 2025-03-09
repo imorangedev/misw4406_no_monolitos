@@ -11,7 +11,7 @@ class JsonToZip():
         super().__init__()
         self.jsonObjects = jsonObjects
         self.zip_name = zip_name
-        self.bucket_name = "experimento_misw4406"
+        self.bucket_name = "monolitos_misw4406"
         self.destination_blob_name = "repo_zip"
 
     def json_to_zip(self, jsonObjects: list, zip_name: str) -> str:

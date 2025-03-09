@@ -5,15 +5,15 @@ from seedwork.infraestructura.utils import broker_host, listar_topicos
 from aplicacion.handlers import HandlerWorker
 
 class Consumidor:
-    def __init__(self, environment):
+    def __init__(self, environment: str, engine):
         self.client = None
         self.consumer = None
-        self.handler = HandlerWorker()
         self.environment = environment
+        self.handler = HandlerWorker(self.environment, engine)
 
         # Establecer conexión con el broker
         try:
-            broker_url = broker_host(environment)
+            broker_url = broker_host(self.environment)
             
             if not broker_url:
                 raise ValueError("El host del broker no es válido.")
@@ -21,8 +21,9 @@ class Consumidor:
             self.client = pulsar.Client(broker_url)
 
             # Obtener tópico de entrada
-            topicos = listar_topicos(environment)
-            self.cola_entrada = topicos["topico_entrada"]
+            topicos = listar_topicos(self.environment)
+            print(topicos)
+            self.cola_entrada = topicos["topico_salida_1"]
 
             # Crear consumidor
             self.consumer = self.client.subscribe(

@@ -23,6 +23,7 @@ class GetImage():
                                      "format": "jpg",
                                      "size": len(image_bytes),
                                      "image": image_byase64})
+
             return image_json
 
         except Exception as e:
